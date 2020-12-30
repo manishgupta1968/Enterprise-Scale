@@ -83,7 +83,8 @@
         "connectivity": "https://raw.githubusercontent.com/manishgupta1968/Enterprise-Scale/main/docs/reference/wingtip/armTemplates/auxiliary/hubspoke-connectivity.json",
         "connectivityMoveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-connectivity', '/', parameters('connectivitySubscriptionId'))]",
         "noConnectivitySubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-connectivity', '/', 'naconn')]",
-        "connectivityDeploymentName": "[take(concat('EntScale-conn', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
+        //"connectivityDeploymentName": "[take(concat('EntScale-conn', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
+        "connectivityDeploymentName": "[take(concat('EntScale-conn', '-', parameters('location'), guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
     },
     "resources": [
         {
