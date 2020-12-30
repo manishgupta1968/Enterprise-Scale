@@ -30,19 +30,14 @@ pool:
 
 steps:
 
-- task: AzureResourceManagerTemplateDeployment@3
+- task: AzureRmDeployment@1
   inputs:
-    deploymentScope: 'Subscription'
-    azureResourceManagerConnection: '${{ variables.AzureCloudServiceConnection }}'
-    subscriptionId: '1b690126-06da-4a90-b59e-da4f4151b0a5'
-    location: '${{ variables.location }}'
+    azureSubscription: 'AzureCloudServiceConnection'
+    resourceLocation: 'Central US'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/manishgupta1968/Enterprise-Scale/main/docs/reference/wingtip/armTemplates/es-add-hub.json'
     csmParametersFileLink: 'https://raw.githubusercontent.com/manishgupta1968/Enterprise-Scale/main/docs/reference/wingtip/armTemplates/es-add-hub.parameters.json'
-    deploymentMode: 'Incremental'
-    deploymentName: 'Deploys-Resources'
-    deploymentOutputs: 'OutputsFromDeployment'
-    addSpnToEnvironment: true
+    extendedLogging: true
 
 - task: ARM Outputs@6
   condition: eq('${{ variables.buildType }}', 'deploy')
