@@ -26,18 +26,40 @@ trigger:
     - docs/reference/wingtip/armTemplates 
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 steps:
 
-- task: AzureRmDeployment@1
+- task: AzureResourceManagerTemplateDeployment@3
+  condition: eq('${{ variables.buildType }}', 'deploy')
   inputs:
-    azureSubscription: 'AzureCloudServiceConnection'
-    resourceLocation: 'Central US'
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: '${{ variables.AzureCloudServiceConnection }}'
+    subscriptionId: '1b690126-06da-4a90-b59e-da4f4151b0a5'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: '${{ variables.yourResourceGroup }}'
+    location: '${{ variables.location }}'
+    templateLocation: 'Linked artifact'
+    csmFile: '${{ variables.csmFileVar }}'
+    csmParametersFile: '${{ variables.csmParametersFileVar }}'
+    deploymentMode: 'Incremental'
+    deploymentName: 'Deploys-Resources'
+    deploymentOutputs: 'OutputsFromDeployment'
+    addSpnToEnvironment: true
+
+- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Subscription'
+    azureResourceManagerConnection: '${{ variables.AzureCloudServiceConnection }}'
+    subscriptionId: '1b690126-06da-4a90-b59e-da4f4151b0a5'
+    location: '${{ variables.location }}'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/manishgupta1968/Enterprise-Scale/main/docs/reference/wingtip/armTemplates/es-add-hub.json'
     csmParametersFileLink: 'https://raw.githubusercontent.com/manishgupta1968/Enterprise-Scale/main/docs/reference/wingtip/armTemplates/es-add-hub.parameters.json'
-    extendedLogging: true
+    deploymentMode: 'Incremental'
+    deploymentName: 'Deploys-Resources'
+    deploymentOutputs: 'OutputsFromDeployment'
+    addSpnToEnvironment: true
 
 - task: ARM Outputs@6
   condition: eq('${{ variables.buildType }}', 'deploy')
