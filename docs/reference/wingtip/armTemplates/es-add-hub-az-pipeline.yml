@@ -1,0 +1,72 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+variables:
+  - name: buildType
+    value: deploy
+  - name: yourResourceGroup
+    value: esAddHubResourceGroup
+  - name: AzureCloudServiceConnection
+    value: AzureCloudServiceConnection
+  - name: location
+    value: "Central US"
+  - name: csmFileVar
+    value: docs/reference/wingtip/armTemplates/es-add-hub.json
+  - name: csmParametersFileVar
+    value: docs/reference/wingtip/armTemplates/es-add-hub.parameters.json
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - docs/reference/wingtip/armTemplates 
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+
+- task: AzureResourceManagerTemplateDeployment@3
+  condition: eq('${{ variables.buildType }}', 'deploy')
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: '${{ variables.AzureCloudServiceConnection }}'
+    subscriptionId: '1b690126-06da-4a90-b59e-da4f4151b0a5'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: '${{ variables.yourResourceGroup }}'
+    location: '${{ variables.location }}'
+    templateLocation: 'Linked artifact'
+    csmFile: '${{ variables.csmFileVar }}'
+    csmParametersFile: '${{ variables.csmParametersFileVar }}'
+    deploymentMode: 'Incremental'
+    deploymentName: 'Deploys-Resources'
+    deploymentOutputs: 'OutputsFromDeployment'
+    addSpnToEnvironment: true
+
+
+
+- task: ARM Outputs@6
+  condition: eq('${{ variables.buildType }}', 'deploy')
+  inputs:
+    ConnectedServiceNameSelector: 'ConnectedServiceNameARM'
+    ConnectedServiceNameARM: '${{ variables.AzureCloudServiceConnection }}'
+    resourceGroupName: '${{ variables.yourResourceGroup }}'
+    whenLastDeploymentIsFailed: 'fail'
+
+- task: AzureCLI@2
+  condition: eq('${{ variables.buildType }}', 'destroy')
+  inputs:
+    azureSubscription: '${{ variables.AzureCloudServiceConnection }}'
+    scriptType: 'batch'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az group delete --yes --resource-group %1'
+    arguments: '${{ variables.yourResourceGroup }}'
+- task: BatchScript@1
+  condition: eq('${{ variables.buildType }}', 'destroy')
+  inputs:
+    filename: 'putInfoOnCommit.bat'
+    arguments: '\"All resources destroyed for $(yourResourceGroup)\"'
