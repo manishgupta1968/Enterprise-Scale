@@ -9,7 +9,7 @@
             "value": "" // TODO: Fill in parameter value
         },
         "location": {
-            "value": "" // TODO: Fill in parameter value
+            "value": "Central US" // TODO: Fill in parameter value
         },
         "enableHub": {
             "value": "No"
