@@ -22,7 +22,7 @@
                 "displayName": "location",
                 "description": "Location of the HUB"
             },
-            "defaultValue": "[deployment().location]"
+            "defaultValue": "[parameters('location')]"
         },
         "enableHub": {
             "type": "string",
@@ -119,7 +119,7 @@
             "dependsOn": [
                 "[tenantResourceId('Microsoft.Management/managementGroups/subscriptions/', concat(parameters('enterpriseScaleCompanyPrefix'), '-connectivity'), parameters('connectivitySubscriptionId'))]"
             ],
-            "location": "[deployment().location]",
+            "location": "[parameters('location')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {

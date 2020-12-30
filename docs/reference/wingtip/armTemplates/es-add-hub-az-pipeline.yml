@@ -48,6 +48,7 @@ steps:
     addSpnToEnvironment: true
 
 - task: AzureResourceManagerTemplateDeployment@3
+  condition: eq('${{ variables.buildType }}', 'deploy')
   inputs:
     deploymentScope: 'Subscription'
     azureResourceManagerConnection: '${{ variables.AzureCloudServiceConnection }}'
