@@ -45,7 +45,6 @@ steps:
     deploymentMode: 'Incremental'
     deploymentName: 'Deploys-Resources'
     deploymentOutputs: 'OutputsFromDeployment'
-    overrideParameters: '-TemplateUri https://raw.githubusercontent.com/manishgupta1968/Enterprise-Scale/main/docs/reference/wingtip/armTemplates/'
     addSpnToEnvironment: true
 
 
